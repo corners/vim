@@ -25,14 +25,27 @@ elseif has("unix")
   set gfn=Monospace\ 10
   set shell=/bin/bash
 endif
-set window=50
-set lines=51 columns=120
+
+if has("gui_running")
+	set antialias
+	set window=50
+	set lines=51 columns=120
+end
+
 set number						" turn on line numbers
 set cursorline
 set showcmd                     " display incomplete commands
 set scrolloff=3					" provide some context when editing
 
 set hidden                      " Allow backgrounding buffers without writing them, and remember marks/undo for backgrounded buffers
+
+if has("win32") || has("win64")
+	set backupdir=~/vimfiles/_backup " where to put backup files.
+	set directory=~/vimfiles/_temp " where to put swap files.
+else
+	set backupdir=~/.vim/_backup " where to put backup files.
+	set directory=~/.vim/_temp " where to put swap files.
+endif
 
 " Whitespace
 set autoindent                  " Copy indent from current line when starting a new line
@@ -49,17 +62,23 @@ set smartcase                   " ... unless they contain at least one capital l
 
 set autoread					" auto reload file when it is edited elsewhere
 
-if has("win32") || has("win64")
-	set backupdir=~/vimfiles/_backup " where to put backup files.
-	set directory=~/vimfiles/_temp " where to put swap files.
-else
-	set backupdir=~/.vim/_backup " where to put backup files.
-	set directory=~/.vim/_temp " where to put swap files.
-endif
+" Reload vimrc on save
+au! BufWritePost .vimrc source % 
 
-" Key maps
+" Keyboard mappings
+" Ctrl+s to save
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
+
+" Ctr+tab to switch between buffers
+nmap <C-tab> :bn<CR>
+imap <C-tab> <ESC>:bn<CR>i
+nmap <C-S-tab> bp<CR>
+imap <C-S-tab> <ESC>:bp<CR>i
+
+" Reselect visual block after indent/outdent
+vnoremap < <gv
+vnoremap > >gv
 
 " Plugin: Command-T
 noremap <leader>o <Esc>:CommandT<CR>
@@ -76,6 +95,10 @@ else
 	autocmd FileType html,xhtml,xml,htmldjango,jinjahtml,eruby,mako source ~/.vim/bundle/closetag/plugin/closetag.vim
 endif
 
+" ctags
+let Tlist_Ctags_Cmd='/opt/local/bin/ctags' 
+
 " Javascript
 autocmd BufWritePre *.js :%s/\s\+$//e       " remove trailing whitespace from the end of lines on save
+
 
