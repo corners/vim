@@ -1,27 +1,26 @@
 set nocompatible                " choose no compatibility with legacy vi
-set laststatus=2				" always show the statusline
+set laststatus=2		" always show the statusline
 syntax enable
 set encoding=utf-8
 
 " Plugin: Pathogen
-" Install plugins by copying the plugin files into ~/.vim/bundle/plugin_name
-" Generally, you will download the plugin, extract it and move to ~/.vim/bundle/plugin_name.
-" For example:
+" Plugins are installed by copying the plugin files into ~/.vim/bundle/plugin_name directory. 
+" Download the plugin, extract it and move to ~/.vim/bundle/plugin_name
+" Using git
 " cd ~/.vim
 " git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 " git submodule init && git submodule update
-call pathogen#runtime_append_all_bundles()	
+	
+call pathogen#infect()
 call pathogen#helptags()
-
-filetype plugin indent on       " load file type plugins + indentation
 
 " Appearance
 colorscheme evening
-if has("macunix")
-  set gfn=Monaco:h11
+if has("macunix") 
+  set gfn=Menlo:h10
   set shell=/bin/bash
 elseif has("win32") || has("win64")
-  set guifont=Consolas:h9
+  set gfn=Consolas:h10
 elseif has("unix")
   set gfn=Monospace\ 10
   set shell=/bin/bash
@@ -30,7 +29,7 @@ endif
 if has("gui_running")
 	set antialias
 	set window=50
-	set lines=51 columns=120
+	"set lines=51 columns=120
 end
 
 set number						" turn on line numbers
@@ -50,9 +49,12 @@ endif
 
 " Whitespace
 set autoindent                  " Copy indent from current line when starting a new line
-set nowrap                      " don't wrap lines
+if has("autocmd")
+	filetype indent on
+endif
+"set nowrap                      " don't wrap lines
 set tabstop=4 shiftwidth=4      " a tab is four spaces (or set this to 4)
-set noet                        " don't expand tabs
+"set noet                        " don't expand tabs
 set backspace=indent,eol,start  " backspace through everything in insert mode
 
 " Searching
@@ -67,6 +69,21 @@ set autoread					" auto reload file when it is edited elsewhere
 au! BufWritePost .vimrc source % 
 
 " Keyboard mappings
+if has("gui_running")
+	" need some work
+	nmap <leader>1 :set lines=40 columns=85<CR><C-w>o
+	nmap <leader>2 :set lines=50 columns=171<CR><C-w>v
+end
+
+" Windows Cut, Copy & Paste
+imap <c-x> <Esc>"+xi
+vmap <c-x> "+x
+imap <c-c> <Esc>"+yi
+vmap <c-c> "+y
+imap <c-v> <Esc>"+gPi
+nmap <c-v> "+gP
+vmap <c-v> "+gP
+
 " Ctrl+s to save
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
@@ -86,7 +103,7 @@ noremap <leader>o <Esc>:CommandT<CR>
 noremap <leader>O <Esc>:CommandTFlush<CR>
 noremap <leader>m <Esc>:CommandTBuffer<CR>
 
-" Plugin: CloseTab
+" Plugins: CloseTag
 " Load only for html/xml like files
 autocmd FileType html,htmldjango,jinjahtml,eruby,mako let b:closetag_html_style=1
 if has("win32") || has("win64")
