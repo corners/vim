@@ -6,7 +6,6 @@
 " git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 " git submodule init && git submodule update
 call pathogen#infect()
-call pathogen#helptags()
 
 " choose no compatibility with legacy vi
 set nocompatible
@@ -53,7 +52,7 @@ set autoread
 " Appearance
 colorscheme evening
 if has("macunix") 
-  set gfn=Menlo:h10
+  set gfn=Monaco:h11
   set shell=/bin/bash
 elseif has("win32") || has("win64")
   set gfn=Consolas:h10
@@ -65,7 +64,8 @@ endif
 if has("gui_running")
 	set antialias
 	set window=50
-	"set lines=51 columns=120
+	set lines=52 
+	set columns=100
 end
 
 if has("win32") || has("win64")
