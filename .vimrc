@@ -1,24 +1,59 @@
-set nocompatible                " choose no compatibility with legacy vi
-set laststatus=2				" always show the statusline
-syntax enable
-set encoding=utf-8
-
 " Plugin: Pathogen
-" Install plugins by copying the plugin files into ~/.vim/bundle/plugin_name
-" Generally, you will download the plugin, extract it and move to ~/.vim/bundle/plugin_name.
-" For example:
+" Plugins are installed by copying the plugin files into ~/.vim/bundle/plugin_name directory. 
+" Download the plugin, extract it and move to ~/.vim/bundle/plugin_name
+" Using git
 " cd ~/.vim
 " git submodule add git://github.com/tpope/vim-fugitive.git bundle/fugitive
 " git submodule init && git submodule update
-call pathogen#runtime_append_all_bundles()	
+call pathogen#infect()
 call pathogen#helptags()
 
-filetype plugin indent on       " load file type plugins + indentation
+" choose no compatibility with legacy vi
+set nocompatible
+set history=10000
+" always show the statusline
+set laststatus=2
+" Enable syntax highlighting
+syntax on
+set encoding=utf-8
+set number						" turn on line numbers
+set cursorline
+set cmdheight=2
+set numberwidth=5
+set showtabline=2
+set showcmd                     " display incomplete commands
+set scrolloff=3					" provide some context when editing
+set hidden                      " Allow backgrounding buffers without writing them, and remember marks/undo for backgrounded buffers
+set tabstop=4 
+set shiftwidth=4
+set softtabstop=4
+" Copy indent from current line when starting a new line
+set autoindent                  
+" Enable file type detection.
+" Use the default filetype settings, so that mail gets 'tw' set to 72,
+" 'cindent' is on in C files, etc.
+" Also load indent files, to automatically do language-dependent indenting.
+filetype plugin indent on
+" backspace through everything in insert mode
+set backspace=indent,eol,start
+" Searching
+set showmatch
+" highlight matches
+set hlsearch                    
+" incremental searching
+set incsearch                   
+" searches are case insensitive...
+set ignorecase
+" ... unless they contain at least one capital letter
+set smartcase
+" auto reload file when it is edited elsewhere
+set autoread
+
 
 " Appearance
 colorscheme evening
-if has("macunix")
-  set gfn=Monaco:h11
+if has("macunix") 
+  set gfn=Menlo:h10
   set shell=/bin/bash
 elseif has("win32") || has("win64")
   set gfn=Consolas:h10
@@ -33,13 +68,6 @@ if has("gui_running")
 	"set lines=51 columns=120
 end
 
-set number						" turn on line numbers
-set cursorline
-set showcmd                     " display incomplete commands
-set scrolloff=3					" provide some context when editing
-
-set hidden                      " Allow backgrounding buffers without writing them, and remember marks/undo for backgrounded buffers
-
 if has("win32") || has("win64")
 	set backupdir=~/vimfiles/_backup " where to put backup files.
 	set directory=~/vimfiles/_temp " where to put swap files.
@@ -48,31 +76,18 @@ else
 	set directory=~/.vim/_temp " where to put swap files.
 endif
 
-" Whitespace
-if has("autocmd")
-	filetype indent on
-endif
-set nowrap                      " don't wrap lines
-set tabstop=4 shiftwidth=4      " a tab is four spaces (or set this to 4)
-"set noet                        " don't expand tabs
-set backspace=indent,eol,start  " backspace through everything in insert mode
-
-" Searching
-set hlsearch                    " highlight matches
-set incsearch                   " incremental searching
-set ignorecase                  " searches are case insensitive...
-set smartcase                   " ... unless they contain at least one capital letter
-
-set autoread					" auto reload file when it is edited elsewhere
+" Autocommands
+" =========================================================
 
 " Reload vimrc on save
-au! BufWritePost .vimrc source %
+au! BufWritePost .vimrc source % 
+
 
 " Keyboard mappings
-
+" =========================================================
 if has("gui_running")
-	" needs some work
-	nmap <leader>1 :set lines=40 columns=85<CR><C-w>o
+	" need some work
+	nmap <leader>1 :set lines=40 columns=100<CR><C-w>o
 	nmap <leader>2 :set lines=50 columns=171<CR><C-w>v
 end
 
@@ -89,15 +104,19 @@ vmap <c-v> "+gP
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
 
-" Ctrl+Tab to switch between buffers
+" Ctr+tab to switch between buffers
 nmap <C-tab> :bn<CR>
-imap <C-tab> <Esc>:bn<CR>i
-nmap <C-S-tab> :bp<CR>
-imap <C-S-tab> <Esc>:bp<CR>i
+imap <C-tab> <ESC>:bn<CR>i
+nmap <C-S-tab> bp<CR>
+imap <C-S-tab> <ESC>:bp<CR>i
 
 " Reselect visual block after indent/outdent
 vnoremap < <gv
 vnoremap > >gv
+
+" Edit vimrc
+nmap <c-_> :e ~/.vimrc<CR>
+nmap <c-a-_> :source $MYVIMRC<CR>
 
 " Plugin: Command-T
 noremap <leader>o <Esc>:CommandT<CR>
@@ -118,3 +137,34 @@ let Tlist_Ctags_Cmd='/opt/local/bin/ctags'
 
 " Javascript
 autocmd BufWritePre *.js :%s/\s\+$//e       " remove trailing whitespace from the end of lines on save
+
+" Clear the search buffer when hitting return
+function! MapCR()
+  nnoremap <cr> :nohlsearch<cr>
+endfunction
+call MapCR()
+nnoremap <leader><leader> <c-^>
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OPEN FILES IN DIRECTORY OF CURRENT FILE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>e :edit %%
+map <leader>v :view %%
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RENAME CURRENT FILE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RenameFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        exec ':silent !rm ' . old_name
+        redraw!
+    endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+
