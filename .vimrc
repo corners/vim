@@ -104,6 +104,10 @@ vmap <c-v> "+gP
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>a
 
+" Ctrl+w to delete current buffer
+nmap <c-w> :bd<CR>
+imap <c-w> <Esc>:bd<CR>i
+
 " Ctr+tab to switch between buffers
 nmap <C-tab> :bn<CR>
 imap <C-tab> <ESC>:bn<CR>i
