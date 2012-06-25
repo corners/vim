@@ -65,7 +65,7 @@ if has("gui_running")
 	set antialias
 	set window=50
 	set lines=52 
-	set columns=100
+	set columns=120
 end
 
 if has("win32") || has("win64")
@@ -78,6 +78,10 @@ endif
 
 " Autocommands
 " =========================================================
+
+if has("autocmd")
+  filetype indent on
+endif
 
 " Reload vimrc on save
 au! BufWritePost .vimrc source % 
@@ -120,7 +124,6 @@ vnoremap > >gv
 
 " Edit vimrc
 nmap <c-_> :e ~/.vimrc<CR>
-nmap <c-a-_> :source $MYVIMRC<CR>
 
 " Plugin: Command-T
 noremap <leader>o <Esc>:CommandT<CR>
